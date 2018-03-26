@@ -2,9 +2,15 @@ import socket
 from threading import Thread
 from sys import exit
 
+MENU_MESSAGE = """Default settings
+Username: User
+Host: 0.0.0.0
+Port: 2222
+If you want to change settings press -c"""
+
 class Client:
 
-	def __init__(self, name="User", host="localhost", port=2222):
+	def __init__(self, name="User", host="0.0.0.0", port=2222):
 		self.host = host
 		self.port = port
 		self.name = name.encode()
@@ -26,6 +32,7 @@ class Client:
 		except socket.error:
 			print("Can't connect to the server")
 			exit()
+		print("You are connected properly!")
 		self.connected = True
 
 	def __send_msg(self):
@@ -66,6 +73,19 @@ class Client:
 		self.recv_thread.join()
 		self.client_socket.close()
 
-name = input("Enter your chat name: ")
-client = Client(name=name)
-client.start_conversation()
+def client_menu():
+	print(MENU_MESSAGE)
+	client = None
+	settings = input()
+	if settings == "-c":
+		name = input("Enter username: ")
+		host = input("Enter host: ")
+		port = int(input("Enter port: "))
+		client = Client(name=name, host=host, port=port)
+	else:
+		print("Started with default settings.")
+		client = Client()
+	client.start_conversation()
+
+if __name__ == "__main__":
+	client_menu()

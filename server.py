@@ -3,9 +3,14 @@ from client_thread import ClientThread
 from queue import Queue
 import time
 
+SERVER_MESSAGE = """Default settings
+Host: 0.0.0.0
+Port: 2222
+If u want to change settings press -c"""
+
 class Server:
 	
-	def __init__(self, host="localhost", port=2222):
+	def __init__(self, host="0.0.0.0", port=2222):
 		self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		self.server_socket.bind((host, port))
 		self.server_socket.listen(5)
@@ -43,5 +48,18 @@ class Server:
 		self.server_socket.shutdown(socket.SHUT_RDWR)
 		self.server_socket.close()
 
-s = Server()
-s.echo_clients()
+def server_menu():
+	print(SERVER_MESSAGE)
+	settings = input()
+	server = None
+	if settings == "-c":
+		host = input("Enter hostname: ")
+		port = int(input("Enter port: "))
+		server = Server(host, port)
+	else:
+		print("Started with default settings.")
+		server = Server()
+	server.echo_clients()
+
+if __name__ == '__main__':
+	server_menu()
